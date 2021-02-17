@@ -32,12 +32,10 @@ PLAY2 = pygame.image.load('imagens/menus/menu/2play.jpg')
 CREDITOS = pygame.image.load('imagens/menus/menu/creditos.jpg')
 
 #inicializando grupos e instanciando as classes
-player_grupo = pygame.sprite.Group()
 player_grupo2 = pygame.sprite.Group()
 player_grupo1 = pygame.sprite.Group()
 player = Player('imagens/players/ferro.png')
 player2 = Player('imagens/players/capitao.png')
-player_grupo.add(player)
 player_grupo2.add(player2)
 player_grupo1.add(player)
 
@@ -177,13 +175,8 @@ while True:
             item_grupo2.update()
             item_grupo2.draw(janela)
 
-            player_grupo.add(player2)
-
             text2 = pontuacao.render("Pontuação: " + str(item2.getPontuacao()), 1, (0, 0, 0))
             janela.blit(text2, (580, 20))
-
-        else:
-            player_grupo.remove(player2)
 
         #colisão para pegar o item
         if (pygame.sprite.groupcollide(player_grupo1, item_grupo, False, False, pygame.sprite.collide_mask)):
@@ -195,14 +188,9 @@ while True:
             item2.atualiza()
             efeito.play()
 
+        #faz com que tudo reinicie quando o jogo acaba
+        def AcabaJogo():
 
-        #colisão entre os inimigos
-        if (pygame.sprite.groupcollide(player_grupo, inimigo_grupo, False, False, pygame.sprite.collide_mask)):
-
-            efeito_gameOver.play()
-            perdeu = True
-            jogar = False
-            
             player.atualiza()
             player2.atualiza()
             item.rec()
@@ -212,6 +200,28 @@ while True:
             inimigo3.atualiza()
             musica.stop()
             musicaOn = True
+
+        #colisão entre os inimigos
+        if (pygame.sprite.groupcollide(player_grupo1, inimigo_grupo, False, False, pygame.sprite.collide_mask)):
+
+            efeito_gameOver.play()
+
+            if(jogadores2==False):
+                perdeu = True
+            else:
+                player2_wins = True
+
+            jogar = False
+            AcabaJogo()
+
+        #colisão entre os inimigos
+        if (pygame.sprite.groupcollide(player_grupo2, inimigo_grupo, False, False, pygame.sprite.collide_mask)):
+
+            efeito_gameOver.play()
+            player1_wins = True
+            jogar = False
+            AcabaJogo()
+
 
         # caso pegue os 20 gameboys ganha o jogo
         if item.getPontuacao() == 20 or item2.getPontuacao() == 20:
@@ -226,15 +236,7 @@ while True:
                 player2_wins = True;
                     
             jogar = False
-            player.atualiza()
-            player2.atualiza()
-            item.rec()
-            item2.rec()
-            inimigo.atualiza()
-            inimigo2.atualiza()
-            inimigo3.atualiza()
-            musica.stop()
-            musicaOn = True
+            AcabaJogo()
 
         pygame.display.update()
 
